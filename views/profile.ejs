@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hồ Sơ Cá Nhân</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: white;
+      padding: 1.2rem 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    nav {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+      border-bottom-color: #ffd700;
+    }
+
+    .cart-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(255,71,87,0.4);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .profile-header {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-left: 5px solid #000;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile-welcome {
+      flex: 1;
+    }
+
+    .profile-welcome h1 {
+      font-size: 2rem;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-welcome p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      text-align: center;
+      border-top: 4px solid #000;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .form-section {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .form-section h2 {
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+      color: #1a1a1a;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #1a1a1a;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 0.85rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #000;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      border: 2px solid #ddd;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      background: #d1e7dd;
+      color: #0a3622;
+      border-color: #198754;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #842029;
+      border-color: #dc3545;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: #000;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #333;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">🎂 Tiệm Bánh</div>
+      <nav>
+        <a href="/">Trang Chủ</a>
+        <a href="/cart" class="cart-link">
+          Giỏ Hàng
+          <span class="cart-badge" id="cartBadge"><%= cart.length %></span>
+        </a>
+        <a href="/wishlist">❤ Yêu Thích</a>
+        <% if (user) { %>
+          <a href="/orders">Đơn Hàng</a>
+          <a href="/profile">👤 Hồ Sơ</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard">⚙️ Admin</a>
+          <% } %>
+          <a href="/auth/logout">Đăng Xuất</a>
+        <% } else { %>
+          <a href="/auth/login">Đăng Nhập</a>
+          <a href="/auth/register">Đăng Ký</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <a href="/" class="back-link">← Quay lại trang chủ</a>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="profile-header">
+      <div class="profile-welcome">
+        <h1>👋 Chào <%= user.name %></h1>
+        <p>Đây là trang hồ sơ cá nhân của bạn</p>
+      </div>
+      <div class="profile-avatar">👤</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number"><%= totalOrders %></div>
+        <div class="stat-label">Tổng Đơn Hàng</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= totalSpent.toLocaleString('vi-VN') %>đ</div>
+        <div class="stat-label">Tổng Chi Tiêu</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= new Date(user.createdAt).toLocaleDateString('vi-VN') %></div>
+        <div class="stat-label">Ngày Tham Gia</div>
+      </div>
+    </div>
+
+    <form method="POST" class="form-section">
+      <h2>✏️ Chỉnh Sửa Thông Tin</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Họ Tên *</label>
+          <input type="text" id="name" name="name" value="<%= user.name %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" value="<%= user.email %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Số Điện Thoại</label>
+          <input type="tel" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="Ví dụ: 0123456789">
+        </div>
+
+        <div class="form-group">
+          <label for="address">Địa Chỉ</label>
+          <textarea id="address" name="address" placeholder="Địa chỉ giao hàng"><%= user.address || '' %></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Lưu Thay Đổi</button>
+        <a href="/" class="btn btn-secondary">Hủy</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const badge = document.getElementById('cartBadge');
+    if (badge && parseInt(badge.textContent) > 0) {
+      // Cart badge already visible
+    }
+  </script>
+</body>
+</html>

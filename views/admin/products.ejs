@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Sản Phẩm</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .sidebar-menu {
+      list-style: none;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    .header-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #333;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #000;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .empty-message {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      background: white;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin" class="active">Sản Phẩm</a></li>
+        <li><a href="/admin/categories">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-action">
+        <h1>🍰 Quản Lý Sản Phẩm</h1>
+        <a href="/admin/add" class="btn btn-primary">+ Thêm Sản Phẩm</a>
+      </div>
+
+      <% if (products.length === 0) { %>
+        <div class="empty-message">
+          <p>Chưa có sản phẩm nào</p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Hình Ảnh</th>
+              <th>Tên Sản Phẩm</th>
+              <th>Danh Mục</th>
+              <th>Giá</th>
+              <th>Kho</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(product => { %>
+              <tr>
+                <td>
+                  <% if (product.image) { %>
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="product-image">
+                  <% } else { %>
+                    <span>Không có ảnh</span>
+                  <% } %>
+                </td>
+                <td><%= product.name %></td>
+                <td><%= product.category ? product.category.name : '-' %></td>
+                <td><%= product.price.toLocaleString('vi-VN') %>đ</td>
+                <td><%= product.stock %></td>
+                <td>
+                  <div class="actions">
+                    <a href="/admin/edit/<%= product._id %>" class="btn btn-secondary">Sửa</a>
+                    <form action="/admin/delete/<%= product._id %>" method="POST" style="display: inline;" onsubmit="return confirm('Xác nhận xóa?');">
+                      <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

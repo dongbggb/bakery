@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiệm Bánh</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    header {
+      background: #1a1a1a;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    .cart-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      min-width: 24px;
+    }
+    @keyframes cartBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.3);
+      }
+    }
+    .cart-badge.animate {
+      animation: cartBounce 0.4s ease-in-out;
+    }
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+    nav a:hover {
+      opacity: 0.8;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    .subtitle {
+      margin-bottom: 2rem;
+      color: #666;
+    }
+    .filters-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .filter-group label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .filter-group input,
+    .filter-group select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+    }
+    .filters-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #333;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .product-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .product-image {
+      width: 100%;
+      height: 200px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 1rem;
+    }
+    .product-name {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      min-height: 2.5rem;
+      overflow: hidden;
+    }
+    .product-name a {
+      color: #000;
+      text-decoration: none;
+    }
+    .product-name a:hover {
+      text-decoration: underline;
+    }
+    .product-category {
+      color: #999;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .product-rating {
+      color: #ffc107;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .product-stock {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .stock-available {
+      background-color: #d1e7dd;
+      color: #0a3622;
+    }
+    .stock-low {
+      background-color: #fff3cd;
+      color: #664d03;
+    }
+    .stock-unavailable {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .product-actions form,
+    .product-actions a {
+      flex: 1;
+    }
+    .product-actions button,
+    .product-actions a {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+    .btn-add {
+      background-color: #000;
+      color: white;
+    }
+    .btn-add:hover {
+      background-color: #333;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .pagination a,
+    .pagination span {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #000;
+    }
+    .pagination a:hover {
+      background-color: #f0f0f0;
+    }
+    .pagination .current {
+      background-color: #000;
+      color: white;
+      border-color: #000;
+    }
+    .empty-message {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+      background: white;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">Tiệm Bánh</div>
+      <nav>
+        <a href="/">Trang Chủ</a>
+        <a href="/cart" class="cart-link">
+          Giỏ Hàng
+          <span class="cart-badge" id="cartBadge"><%= cart.length %></span>
+        </a>
+        <a href="/wishlist">Yêu Thích</a>
+        <% if (user) { %>
+          <a href="/orders">Đơn Hàng</a>          <a href="/profile">👤 Hồ Sơ</a>          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard">Admin</a>
+          <% } %>
+          <a href="/auth/logout">Đăng Xuất</a>
+        <% } else { %>
+          <a href="/auth/login">Đăng Nhập</a>
+          <a href="/auth/register">Đăng Ký</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Chào mừng đến Tiệm Bánh</h1>
+    <p class="subtitle">Những chiếc bánh ngon nhất, được làm từ tình yêu</p>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <form action="/" method="GET">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label>Tìm kiếm:</label>
+            <input type="text" name="search" value="<%= search %>" placeholder="Nhập tên sản phẩm...">
+          </div>
+          <div class="filter-group">
+            <label>Danh mục:</label>
+            <select name="category">
+              <option value="">-- Tất cả danh mục --</option>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat._id %>" <%= category === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+        <div class="filters-buttons">
+          <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+          <a href="/" class="btn btn-secondary">Xóa bộ lọc</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Products Grid -->
+    <% if (products.length === 0) { %>
+      <div class="empty-message">
+        <p>Không tìm thấy sản phẩm nào</p>
+      </div>
+    <% } else { %>
+      <div class="products-grid">
+        <% products.forEach(product => { %>
+          <div class="product-card">
+            <div class="product-image">
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+              <% } %>
+            </div>
+            <div class="product-info">
+              <div class="product-name">
+                <a href="/product/<%= product._id %>"><%= product.name %></a>
+              </div>
+              <div class="product-category"><%= product.category ? product.category.name : 'Chưa phân loại' %></div>
+              <div class="product-rating">★ <%= product.rating.toFixed(1) %> (<%= product.reviewCount %>)</div>
+              <div class="product-stock <%= product.stock > 5 ? 'stock-available' : product.stock > 0 ? 'stock-low' : 'stock-unavailable' %>">
+                <% if (product.stock > 5) { %>
+                  ✓ Còn hàng
+                <% } else if (product.stock > 0) { %>
+                  ⚠ Chỉ còn <%= product.stock %>
+                <% } else { %>
+                  ✕ Hết hàng
+                <% } %>
+              </div>
+              <div class="product-price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
+              <div class="product-actions">
+                <form action="/cart/add/<%= product._id %>" method="POST">
+                  <input type="hidden" name="quantity" value="1">
+                  <% if (product.stock > 0) { %>
+                    <button type="submit" class="btn btn-add">Thêm vào giỏ</button>
+                  <% } else { %>
+                    <button type="button" disabled style="background-color: #ccc; cursor: not-allowed;">Hết hàng</button>
+                  <% } %>
+                </form>
+                <% if (user) { %>
+                  <form action="/wishlist/<%= wishlistIds.includes(product._id.toString()) ? 'remove' : 'add' %>/<%= product._id %>" method="POST" style="flex: 0 0 auto; width: auto;">
+                    <button type="submit" style="width: auto; padding: 0.5rem 0.75rem; background-color: transparent; border: 2px solid #000; border-radius: 4px; cursor: pointer; font-size: 1.2rem;">
+                      <%= wishlistIds.includes(product._id.toString()) ? '❤' : '♡' %>
+                    </button>
+                  </form>
+                <% } %>
+                <a href="/product/<%= product._id %>" class="btn" style="background-color: #6c757d; color: white;">Chi tiết</a>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+      <!-- Pagination -->
+      <% if (pages > 1) { %>
+        <div class="pagination">
+          <% for (let i = 1; i <= pages; i++) { %>
+            <% if (i === page) { %>
+              <span class="current"><%= i %></span>
+            <% } else { %>
+              <a href="/?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= category ? '&category=' + encodeURIComponent(category) : '' %>"><%= i %></a>
+            <% } %>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+
+  <script>
+    // Hàm cập nhật giỏ hàng với animation
+    function updateCartBadge() {
+      const badge = document.getElementById('cartBadge');
+      if (!badge) return;
+      
+      // Thêm class animate để trigger animation
+      badge.classList.remove('animate');
+      // Force reflow để restart animation
+      void badge.offsetWidth;
+      badge.classList.add('animate');
+    }
+
+    // Lắng nghe sự kiện thêm vào giỏ hàng
+    document.querySelectorAll('form[action*="/cart/add/"]').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        // Trigger animation trước khi submit
+        updateCartBadge();
+      });
+    });
+
+    // Cập nhật giỏ hàng khi trang được load
+    window.addEventListener('load', function() {
+      const badge = document.getElementById('cartBadge');
+      if (badge && parseInt(badge.textContent) > 0) {
+        // Hiển thị badge nếu có items
+      }
+    });
+  </script>
+</body>
+</html>

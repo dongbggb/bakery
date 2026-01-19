@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chỉnh Sửa Mã Giảm Giá</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin: 0;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: 'Arial', sans-serif;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .error-message {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-text {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.3rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+
+    .checkbox-group label {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/categories">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts" class="active">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="form-container">
+        <h1>Chỉnh Sửa Mã Giảm Giá</h1>
+
+        <% if (message) { %>
+          <div class="error-message"><%= message %></div>
+        <% } %>
+
+        <form method="POST" action="/admin/discount/<%= discount._id %>/edit">
+          <div class="form-group">
+            <label for="code">Mã Giảm Giá *</label>
+            <input type="text" id="code" name="code" value="<%= discount.code %>" required placeholder="VD: SAVE10">
+            <p class="info-text">Mã sẽ tự động chuyển thành chữ hoa</p>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Mô Tả</label>
+            <textarea id="description" name="description" placeholder="Mô tả mã giảm giá (tùy chọn)"><%= discount.description || '' %></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="discountType">Loại Giảm Giá *</label>
+              <select id="discountType" name="discountType" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="percentage" <% if (discount.discountType === 'percentage') { %>selected<% } %>>Phần trăm (%)</option>
+                <option value="fixed" <% if (discount.discountType === 'fixed') { %>selected<% } %>>Tiền cố định (đ)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="discountValue">Giá Trị *</label>
+              <input type="number" id="discountValue" name="discountValue" value="<%= discount.discountValue %>" required min="0" step="0.01" placeholder="VD: 10 hoặc 50000">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="minOrderValue">Giá Trị Đơn Hàng Tối Thiểu (đ)</label>
+              <input type="number" id="minOrderValue" name="minOrderValue" value="<%= discount.minOrderValue %>" min="0" step="0.01" placeholder="0 để không giới hạn">
+              <p class="info-text">Đơn hàng phải có giá trị tối thiểu này mới áp dụng được mã</p>
+            </div>
+
+            <div class="form-group">
+              <label for="maxDiscount">Giảm Giá Tối Đa (đ)</label>
+              <input type="number" id="maxDiscount" name="maxDiscount" value="<%= discount.maxDiscount || '' %>" min="0" step="0.01" placeholder="Để trống nếu không giới hạn">
+              <p class="info-text">Chỉ áp dụng nếu loại giảm giá là phần trăm</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="usageLimit">Số Lần Sử Dụng Tối Đa</label>
+              <input type="number" id="usageLimit" name="usageLimit" value="<%= discount.usageLimit || '' %>" min="1" placeholder="Để trống để không giới hạn">
+              <p class="info-text">Số lần mã này có thể được sử dụng (hiện đã dùng: <%= discount.usedCount %>)</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">Ngày Bắt Đầu *</label>
+              <input type="datetime-local" id="startDate" name="startDate" value="<%= new Date(discount.startDate).toISOString().slice(0, 16) %>" required>
+            </div>
+
+            <div class="form-group">
+              <label for="endDate">Ngày Kết Thúc *</label>
+              <input type="datetime-local" id="endDate" name="endDate" value="<%= new Date(discount.endDate).toISOString().slice(0, 16) %>" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="isActive" name="isActive" <% if (discount.isActive) { %>checked<% } %>>
+              <label for="isActive">Kích hoạt mã giảm giá</label>
+            </div>
+            <p class="info-text">Bỏ dấu để tắt mã mà không xóa</p>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+            <a href="/admin/discounts" class="btn btn-secondary" style="text-align: center; color: white;">Hủy</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

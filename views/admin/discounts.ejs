@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Mã Giảm Giá</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin: 0;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: #1a1a1a;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    table th {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table td {
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-btn {
+      margin-right: 5px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .empty-message {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      color: #666;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .badge-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .badge-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .code-column {
+      font-weight: bold;
+      color: #007bff;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/categories">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts" class="active">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-action">
+        <h1>Quản Lý Mã Giảm Giá</h1>
+        <a href="/admin/discount/add" class="btn btn-primary">+ Thêm Mã Giảm Giá</a>
+      </div>
+
+      <% if (discounts.length === 0) { %>
+        <div class="empty-message">
+          <p>Chưa có mã giảm giá nào. <a href="/admin/discount/add">Thêm mã giảm giá đầu tiên</a></p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã</th>
+              <th>Loại</th>
+              <th>Giá Trị</th>
+              <th>Đơn Hàng Tối Thiểu</th>
+              <th>Số Lần Sử Dụng</th>
+              <th>Ngày Bắt Đầu - Kết Thúc</th>
+              <th>Trạng Thái</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% discounts.forEach(discount => { %>
+              <%
+                const now = new Date();
+                const isExpired = now > new Date(discount.endDate);
+                const isActive = discount.isActive && !isExpired;
+              %>
+              <tr>
+                <td><span class="code-column"><%= discount.code %></span></td>
+                <td>
+                  <% if (discount.discountType === 'percentage') { %>
+                    Phần trăm
+                  <% } else { %>
+                    Tiền cố định
+                  <% } %>
+                </td>
+                <td>
+                  <% if (discount.discountType === 'percentage') { %>
+                    <%= discount.discountValue %>%
+                  <% } else { %>
+                    <%= discount.discountValue.toLocaleString('vi-VN') %>đ
+                  <% } %>
+                </td>
+                <td><%= discount.minOrderValue.toLocaleString('vi-VN') %>đ</td>
+                <td>
+                  <% if (discount.usageLimit) { %>
+                    <%= discount.usedCount %>/<%= discount.usageLimit %>
+                  <% } else { %>
+                    <%= discount.usedCount %>/Không giới hạn
+                  <% } %>
+                </td>
+                <td>
+                  <small>
+                    <%= new Date(discount.startDate).toLocaleDateString('vi-VN') %>
+                    <br>
+                    <%= new Date(discount.endDate).toLocaleDateString('vi-VN') %>
+                  </small>
+                </td>
+                <td>
+                  <% if (isActive) { %>
+                    <span class="badge badge-success">Hoạt động</span>
+                  <% } else if (isExpired) { %>
+                    <span class="badge badge-danger">Hết hạn</span>
+                  <% } else if (!discount.isActive) { %>
+                    <span class="badge badge-danger">Tắt</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a href="/admin/discount/<%= discount._id %>/edit" class="btn btn-secondary action-btn">Sửa</a>
+                    <form method="POST" action="/admin/discount/<%= discount._id %>/delete" style="display: inline;">
+                      <button type="submit" class="btn btn-danger action-btn" onclick="return confirm('Bạn chắc chắn muốn xóa mã giảm giá này?')">Xóa</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

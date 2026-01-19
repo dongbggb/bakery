@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Người Dùng</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .sidebar-menu {
+      list-style: none;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #000;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .role-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      text-align: center;
+      font-weight: bold;
+    }
+    .role-admin {
+      background-color: #333;
+      color: white;
+    }
+    .role-user {
+      background-color: #999;
+      color: white;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      background-color: #000;
+      color: white;
+      font-size: 0.9rem;
+    }
+    .btn:hover {
+      background-color: #333;
+    }
+    .empty-message {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      background: white;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/categories">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users" class="active">Người Dùng</a></li>
+        <li><a href="/admin/discounts">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>👥 Quản Lý Người Dùng</h1>
+
+      <% if (users.length === 0) { %>
+        <div class="empty-message">
+          <p>Chưa có người dùng nào</p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>Điện Thoại</th>
+              <th>Role</th>
+              <th>Ngày Tạo</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td><%= u.name %></td>
+                <td><%= u.email %></td>
+                <td><%= u.phone || '-' %></td>
+                <td>
+                  <span class="role-badge role-<%= u.role %>">
+                    <%= u.role === 'admin' ? 'Admin' : 'User' %>
+                  </span>
+                </td>
+                <td><%= new Date(u.createdAt).toLocaleDateString('vi-VN') %></td>
+                <td>
+                  <a href="/admin/user/<%= u._id %>" class="btn">Chi Tiết</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>
