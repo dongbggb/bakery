@@ -55,6 +55,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
+app.use('/chat', require('./routes/chat'));
 app.use('/payment', require('./routes/payment'));
 
 // 404 handler

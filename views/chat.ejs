@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Bot - DBAKER</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f7fb; color: #222; }
+    header { background: #1a1a1a; color: #fff; padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+    .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { color: #fff; text-decoration: none; }
+    nav a:hover { opacity: 0.85; }
+    .cart-badge { background: #dc3545; color: #fff; border-radius: 50%; padding: 0.2rem 0.55rem; font-size: 0.8rem; margin-left: 0.3rem; }
+    .page { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem 3rem; }
+    h1 { margin-bottom: 1rem; }
+    .sub { color: #555; margin-bottom: 1.5rem; }
+    .chat-card { background: #fff; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); overflow: hidden; }
+    .chat-body { padding: 1.5rem; height: 520px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .msg { padding: 0.9rem 1rem; border-radius: 10px; max-width: 80%; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .user { align-self: flex-end; background: #000; color: #fff; border-bottom-right-radius: 4px; }
+    .bot { align-self: flex-start; background: #f1f3f8; border-bottom-left-radius: 4px; }
+    .typing { display: inline-flex; gap: 4px; align-items: center; }
+    .dot { width: 6px; height: 6px; background: #555; border-radius: 50%; animation: blink 1s infinite ease-in-out; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+    .product-card { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 8px; max-width: 220px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: transform 0.1s ease, box-shadow 0.1s ease; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .product-img { width: 100%; max-height: 140px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+    .product-name { font-weight: 700; margin-bottom: 4px; }
+    .product-price { color: #111; margin-bottom: 4px; }
+    .product-meta { color: #555; font-size: 0.9rem; }
+    .input-area { display: flex; gap: 0.8rem; padding: 1rem 1.5rem; border-top: 1px solid #eee; background: #fafafa; }
+    .input-area textarea { flex: 1; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; resize: none; min-height: 70px; font-family: inherit; }
+    .input-area button { background: #000; color: #fff; border: none; padding: 0 1.4rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .input-area button:hover { background: #333; }
+    .status { font-size: 0.9rem; color: #666; margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo" style="font-weight: bold; font-size: 1.2rem;">DBAKER</div>
+      <nav>
+        <a href="/">Trang Chủ</a>
+        <a href="/cart">Giỏ Hàng <span class="cart-badge"><%= (cart || []).length %></span></a>
+        <a href="/wishlist">Yêu Thích</a>
+        <a href="/chat">Chat Bot</a>
+        <% if (user) { %>
+          <a href="/orders">Đơn Hàng</a>
+          <a href="/profile">👤 Hồ Sơ</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard">Admin</a>
+          <% } %>
+          <a href="/auth/logout">Đăng Xuất</a>
+        <% } else { %>
+          <a href="/auth/login">Đăng Nhập</a>
+          <a href="/auth/register">Đăng Ký</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+    <h1>Chat Bot</h1>
+    <p class="sub">Hỏi về sản phẩm, khuyến mãi, tình trạng đơn hàng.</p>
+
+    <div class="chat-card">
+      <div id="chatBody" class="chat-body"></div>
+      <div class="input-area">
+        <textarea id="chatInput" placeholder="Nhập câu hỏi..."></textarea>
+        <button id="sendBtn">Gửi</button>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById('chatBody');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const statusEl = document.getElementById('status');
+
+    let messages = [
+      { role: 'assistant', content: 'Chào bạn! Mình là chatbot của DBAKER. Mình có thể giúp gì cho bạn?' }
+    ];
+
+    function renderMessages() {
+      chatBody.innerHTML = '';
+      messages.forEach((m) => {
+        const div = document.createElement('div');
+        div.className = `msg ${m.role === 'assistant' ? 'bot' : 'user'}`;
+        if (m.role === 'assistant') {
+          div.innerHTML = m.content;
+        } else {
+          div.textContent = m.content;
+        }
+        chatBody.appendChild(div);
+      });
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    let typingEl = null;
+    function showTyping() {
+      if (typingEl) return;
+      typingEl = document.createElement('div');
+      typingEl.className = 'msg bot';
+      typingEl.innerHTML = '<span class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+      chatBody.appendChild(typingEl);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function hideTyping() {
+      if (typingEl && typingEl.parentNode) typingEl.parentNode.removeChild(typingEl);
+      typingEl = null;
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      messages.push({ role: 'user', content: text });
+      renderMessages();
+      chatInput.value = '';
+      statusEl.textContent = 'Đang trả lời...';
+      showTyping();
+
+      try {
+        const res = await fetch('/chat/api/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.reply) {
+          messages.push({ role: 'assistant', content: data.reply });
+        } else {
+          messages.push({ role: 'assistant', content: data.error || 'Xin lỗi, mình gặp sự cố.' });
+        }
+      } catch (err) {
+        messages.push({ role: 'assistant', content: 'Không thể kết nối. Vui lòng thử lại.' });
+      } finally {
+        renderMessages();
+        hideTyping();
+        statusEl.textContent = '';
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    renderMessages();
+  </script>
+</body>
+</html>
