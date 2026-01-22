@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Đơn Hàng</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .sidebar-menu {
+      list-style: none;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .order-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .info-group {
+      padding-bottom: 1rem;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .info-value {
+      font-size: 1.1rem;
+      color: #333;
+      margin-top: 0.3rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+    }
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status-confirmed {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    .status-shipped {
+      background-color: #cfe2ff;
+      color: #084298;
+    }
+    .status-delivered {
+      background-color: #d1e7dd;
+      color: #0a3622;
+    }
+    .status-cancelled {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .summary {
+      text-align: right;
+      margin-top: 2rem;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    .total {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #000;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid #ddd;
+    }
+    .status-form {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .status-form select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      background-color: #000;
+      color: white;
+      font-size: 0.9rem;
+    }
+    .btn:hover {
+      background-color: #333;
+    }
+    .btn-back {
+      background-color: #6c757d;
+    }
+    .btn-back:hover {
+      background-color: #5a6268;
+    }
+    .payment-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+    .payment-paid {
+      background-color: #d1e7dd;
+      color: #0a3622;
+    }
+    .payment-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .payment-failed {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/orders" class="active">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Chi Tiết Đơn Hàng #<%= order._id.toString().slice(-8) %></h1>
+
+      <div class="card">
+        <div class="status-form">
+          <label>Cập Nhật Trạng Thái:</label>
+          <form action="/admin/order/<%= order._id %>/status" method="POST" style="display: flex; gap: 1rem; align-items: center;">
+            <select name="status">
+              <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Chờ Xác Nhận</option>
+              <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>>Đã Xác Nhận</option>
+              <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Đang Giao</option>
+              <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Đã Giao</option>
+              <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Hủy</option>
+            </select>
+            <button type="submit" class="btn">Cập Nhật</button>
+          </form>
+        </div>
+
+        <div class="order-info">
+          <div>
+            <div class="info-group">
+              <div class="info-label">Trạng Thái</div>
+              <div class="info-value">
+                <span class="status-badge status-<%= order.status %>"><%= order.status %></span>
+              </div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Ngày Đặt</div>
+              <div class="info-value"><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></div>
+            </div>
+          </div>
+          <div>
+            <div class="info-group">
+              <div class="info-label">Khách Hàng</div>
+              <div class="info-value"><a href="/admin/user/<%= order.user._id %>" style="color: #667eea; text-decoration: none;"><%= order.user.name %></a></div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Email</div>
+              <div class="info-value"><%= order.user.email %></div>
+            </div>
+            <div class="info-group">
+              <div class="info-label">Điện Thoại</div>
+              <div class="info-value"><%= order.user.phone || 'Không có' %></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+          <div>
+            <div class="info-label">Thanh Toán</div>
+            <div class="info-value">
+              <span class="payment-badge payment-<%= order.paymentStatus %>"><%= order.paymentStatus %> (<%= order.paymentMethod %>)</span>
+            </div>
+          </div>
+          <div>
+            <div class="info-label">Mã giao dịch</div>
+            <div class="info-value"><%= order.paymentRef || 'Chưa có' %></div>
+          </div>
+          <div>
+            <div class="info-label">Thông điệp</div>
+            <div class="info-value"><%= order.paymentMessage || 'Không có' %></div>
+          </div>
+          <div>
+            <div class="info-label">Thời gian thanh toán</div>
+            <div class="info-value"><%= order.paidAt ? new Date(order.paidAt).toLocaleString('vi-VN') : 'Chưa thanh toán' %></div>
+          </div>
+        </div>
+
+        <% if (order.shippingAddress) { %>
+          <div style="background-color: #f0f4ff; padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+            <h2 style="margin-bottom: 1rem; color: #333;">Địa Chỉ Giao Hàng</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+              <div>
+                <div class="info-group">
+                  <div class="info-label">Tên Người Nhận</div>
+                  <div class="info-value"><%= order.shippingName %></div>
+                </div>
+                <div class="info-group">
+                  <div class="info-label">Số Điện Thoại</div>
+                  <div class="info-value"><%= order.shippingPhone %></div>
+                </div>
+              </div>
+              <div>
+                <div class="info-group">
+                  <div class="info-label">Địa Chỉ</div>
+                  <div class="info-value" style="white-space: pre-wrap; word-break: break-word;"><%= order.shippingAddress %></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+
+        <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Sản Phẩm Đặt Hàng</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Sản Phẩm</th>
+              <th>Giá</th>
+              <th>Số Lượng</th>
+              <th>Thành Tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% order.items.forEach(item => { %>
+              <tr>
+                <td><%= item.product.name %></td>
+                <td><%= item.price.toLocaleString('vi-VN') %>đ</td>
+                <td><%= item.quantity %></td>
+                <td><%= (item.price * item.quantity).toLocaleString('vi-VN') %>đ</td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+
+        <div class="summary">
+          <div class="summary-row">
+            <span>Tổng cộng (trước giảm):</span>
+            <span><%= order.totalPrice.toLocaleString('vi-VN') %>đ</span>
+          </div>
+          <% if (order.discountAmount && order.discountAmount > 0) { %>
+            <div class="summary-row" style="color: #2e7d32;">
+              <span>Giảm giá (<%= order.discountCode %>):</span>
+              <span>-<%= order.discountAmount.toLocaleString('vi-VN') %>đ</span>
+            </div>
+          <% } %>
+          <div class="summary-row total">
+            <span>Thanh toán:</span>
+            <span><%= order.finalPrice.toLocaleString('vi-VN') %>đ</span>
+          </div>
+        </div>
+
+        <a href="/admin/orders" class="btn btn-back" style="margin-top: 2rem;">← Quay Lại</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

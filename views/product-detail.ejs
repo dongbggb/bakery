@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %></title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    header {
+      background: #1a1a1a;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+    nav a:hover {
+      opacity: 0.8;
+    }
+    .cart-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      min-width: 24px;
+    }
+    @keyframes cartBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.3);
+      }
+    }
+    .cart-badge.animate {
+      animation: cartBounce 0.4s ease-in-out;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .breadcrumb {
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .breadcrumb a {
+      color: #000;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .product-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .product-image {
+      text-align: center;
+    }
+    .product-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .product-info h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .stars {
+      color: #ffc107;
+    }
+    .price {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 1rem;
+    }
+    .stock-status {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      display: inline-block;
+    }
+    .stock-available {
+      background-color: #d1e7dd;
+      color: #0a3622;
+    }
+    .stock-low {
+      background-color: #fff3cd;
+      color: #664d03;
+    }
+    .stock-unavailable {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+    .description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .category {
+      margin-bottom: 1rem;
+      color: #666;
+    }
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .qty-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.5rem;
+    }
+    .qty-selector button {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: #f0f0f0;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .qty-selector button:hover {
+      background: #e0e0e0;
+    }
+    .qty-selector input {
+      width: 50px;
+      text-align: center;
+      border: none;
+      font-size: 1rem;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #333;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .btn-wishlist {
+      background-color: #fff;
+      color: #000;
+      border: 2px solid #000;
+    }
+    .btn-wishlist.active {
+      background-color: #000;
+      color: white;
+    }
+    .reviews-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .reviews-section h2 {
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+    }
+    .review-form {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .reviews-list {
+      margin-top: 2rem;
+    }
+    .review {
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .review-author {
+      font-weight: bold;
+    }
+    .review-date {
+      color: #999;
+      font-size: 0.9rem;
+    }
+    .review-rating {
+      color: #ffc107;
+      margin-bottom: 0.5rem;
+    }
+    .review-comment {
+      color: #666;
+      line-height: 1.6;
+    }
+    .no-reviews {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">DBAKER</div>
+      <nav>
+        <a href="/">Trang Chủ</a>
+        <a href="/cart" class="cart-link">
+          Giỏ Hàng
+          <span class="cart-badge" id="cartBadge"><%= cart.length %></span>
+        </a>
+        <a href="/wishlist">Yêu Thích</a>
+        <a href="/chat">Chat Bot</a>
+        <% if (user) { %>
+          <a href="/orders">Đơn Hàng</a>
+          <a href="/profile">👤 Hồ Sơ</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard">Admin</a>
+          <% } %>
+          <a href="/auth/logout">Đăng Xuất</a>
+        <% } else { %>
+          <a href="/auth/login">Đăng Nhập</a>
+          <a href="/auth/register">Đăng Ký</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">Trang Chủ</a> > <span><%= product.category ? product.category.name : 'Khác' %></span> > <strong><%= product.name %></strong>
+    </div>
+
+    <div class="product-section">
+      <div class="product-image">
+        <% if (product.image) { %>
+          <img src="<%= product.image %>" alt="<%= product.name %>" style="max-width: 300px;">
+        <% } else { %>
+          <div style="width: 300px; height: 300px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #999;">Không có hình ảnh</div>
+        <% } %>
+      </div>
+
+      <div class="product-info">
+        <h1><%= product.name %></h1>
+
+        <div class="rating">
+          <span class="stars">★ <%= product.rating.toFixed(1) %></span>
+          <span>(<%= product.reviewCount %> đánh giá)</span>
+        </div>
+
+        <div class="price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
+
+        <div class="stock-status <%= product.stock > 5 ? 'stock-available' : product.stock > 0 ? 'stock-low' : 'stock-unavailable' %>">
+          <% if (product.stock > 5) { %>
+            ✓ Còn hàng (<%= product.stock %> sản phẩm)
+          <% } else if (product.stock > 0) { %>
+            ⚠ Chỉ còn <%= product.stock %> sản phẩm
+          <% } else { %>
+            ✕ Hết hàng
+          <% } %>
+        </div>
+
+        <div class="category">
+          <strong>Danh mục:</strong> <%= product.category ? product.category.name : 'Chưa phân loại' %>
+        </div>
+
+        <div class="description">
+          <strong>Mô tả:</strong><br>
+          <%= product.description || 'Không có mô tả' %>
+        </div>
+
+        <% if (product.stock > 0) { %>
+          <form action="/cart/add/<%= product._id %>" method="POST" style="display: inline;">
+            <div class="actions">
+              <div class="qty-selector">
+                <button type="button" onclick="decreaseQty()">-</button>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" max="<%= product.stock %>" readonly>
+                <button type="button" onclick="increaseQty()">+</button>
+              </div>
+              <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+            </div>
+          </form>
+        <% } %>
+
+        <% if (user) { %>
+          <form action="/wishlist/<%= isInWishlist ? 'remove' : 'add' %>/<%= product._id %>" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-wishlist <%= isInWishlist ? 'active' : '' %>">
+              <%= isInWishlist ? '❤ Đã thích' : '♡ Yêu thích' %>
+            </button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="reviews-section">
+      <h2>Đánh giá sản phẩm</h2>
+
+      <% if (user) { %>
+        <% if (canReview) { %>
+          <div class="review-form">
+            <h3 style="margin-bottom: 1rem;">Viết đánh giá của bạn</h3>
+            <form action="/product/<%= product._id %>/review" method="POST">
+              <div class="form-group">
+                <label for="orderId">Chọn đơn hàng:</label>
+                <select id="orderId" name="orderId" required>
+                  <option value="">-- Chọn đơn hàng --</option>
+                  <% reviewableOrders.forEach(orderId => { %>
+                    <option value="<%= orderId %>">Đơn hàng #<%= orderId %></option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="rating">Đánh giá (sao):</label>
+                <select id="rating" name="rating" required>
+                  <option value="">-- Chọn mức đánh giá --</option>
+                  <option value="5">★★★★★ Tuyệt vời (5 sao)</option>
+                  <option value="4">★★★★ Rất tốt (4 sao)</option>
+                  <option value="3">★★★ Tốt (3 sao)</option>
+                  <option value="2">★★ Bình thường (2 sao)</option>
+                  <option value="1">★ Không tốt (1 sao)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="comment">Bình luận:</label>
+                <textarea id="comment" name="comment" required placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+            </form>
+          </div>
+        <% } else { %>
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: center;">
+            <p><%= reviewMessage %></p>
+          </div>
+        <% } %>
+      <% } else { %>
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: center;">
+          <p><a href="/auth/login" style="color: #000; text-decoration: underline;">Đăng nhập</a> để viết đánh giá</p>
+        </div>
+      <% } %>
+
+      <div class="reviews-list">
+        <% if (reviews.length === 0) { %>
+          <div class="no-reviews">Chưa có đánh giá nào</div>
+        <% } else { %>
+          <% reviews.forEach(review => { %>
+            <div class="review">
+              <div class="review-header">
+                <div class="review-author"><%= review.user.name %></div>
+                <div class="review-date"><%= new Date(review.createdAt).toLocaleDateString('vi-VN') %></div>
+              </div>
+              <div class="review-rating">
+                <% for (let i = 0; i < review.rating; i++) { %>★<% } %><% for (let i = review.rating; i < 5; i++) { %>☆<% } %>
+              </div>
+              <div class="review-comment"><%= review.comment %></div>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function increaseQty() {
+      const input = document.getElementById('quantity');
+      const max = parseInt(input.max);
+      if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+      }
+    }
+
+    function decreaseQty() {
+      const input = document.getElementById('quantity');
+      if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+      }
+    }
+
+    // Hàm cập nhật giỏ hàng với animation
+    function updateCartBadge() {
+      const badge = document.getElementById('cartBadge');
+      if (!badge) return;
+      
+      // Thêm class animate để trigger animation
+      badge.classList.remove('animate');
+      // Force reflow để restart animation
+      void badge.offsetWidth;
+      badge.classList.add('animate');
+    }
+
+    // Lắng nghe sự kiện thêm vào giỏ hàng
+    document.querySelectorAll('form[action*="/cart/add/"]').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        // Trigger animation trước khi submit
+        updateCartBadge();
+      });
+    });
+  </script>
+</body>
+</html>

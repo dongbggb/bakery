@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách yêu thích</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    header {
+      background: #1a1a1a;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+    nav a:hover {
+      opacity: 0.8;
+    }
+    .cart-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      min-width: 24px;
+    }
+    @keyframes cartBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.3);
+      }
+    }
+    .cart-badge.animate {
+      animation: cartBounce 0.4s ease-in-out;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .product-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .product-image {
+      width: 100%;
+      height: 200px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 1rem;
+    }
+    .product-name {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      min-height: 2.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .product-name a {
+      color: #000;
+      text-decoration: none;
+    }
+    .product-name a:hover {
+      text-decoration: underline;
+    }
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+    .product-rating {
+      color: #ffc107;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #333;
+    }
+    .btn-secondary {
+      background-color: #ddd;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background-color: #ccc;
+    }
+    .empty-message {
+      background: white;
+      padding: 3rem;
+      border-radius: 8px;
+      text-align: center;
+      color: #999;
+    }
+    .empty-message a {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #000;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .empty-message a:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">DBAKER</div>
+      <nav>
+        <a href="/">Trang Chủ</a>
+        <a href="/cart" class="cart-link">
+          Giỏ Hàng
+          <span class="cart-badge" id="cartBadge"><%= cart.length %></span>
+        </a>
+        <a href="/wishlist">Yêu Thích</a>
+        <a href="/chat">Chat Bot</a>
+        <% if (user) { %>
+          <a href="/orders">Đơn Hàng</a>
+          <a href="/profile">👤 Hồ Sơ</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard">Admin</a>
+          <% } %>
+          <a href="/auth/logout">Đăng Xuất</a>
+        <% } else { %>
+          <a href="/auth/login">Đăng Nhập</a>
+          <a href="/auth/register">Đăng Ký</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Danh sách yêu thích</h1>
+
+    <% if (products.length === 0) { %>
+      <div class="empty-message">
+        <p>Bạn chưa có sản phẩm yêu thích nào</p>
+        <a href="/">Tiếp tục mua sắm</a>
+      </div>
+    <% } else { %>
+      <div class="products-grid">
+        <% products.forEach(product => { %>
+          <div class="product-card">
+            <div class="product-image">
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+              <% } %>
+            </div>
+            <div class="product-info">
+              <div class="product-name">
+                <a href="/product/<%= product._id %>"><%= product.name %></a>
+              </div>
+              <div class="product-price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
+              <div class="product-rating">★ <%= product.rating.toFixed(1) %> (<%= product.reviewCount %>)</div>
+              <div class="product-actions">
+                <a href="/product/<%= product._id %>" class="btn btn-primary">Xem chi tiết</a>
+                <form action="/wishlist/remove/<%= product._id %>" method="POST" style="flex: 1;">
+                  <button type="submit" class="btn btn-secondary" style="width: 100%;">Xóa</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

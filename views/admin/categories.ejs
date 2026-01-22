@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Danh Mục</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin: 0;
+    }
+
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: #1a1a1a;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    table th {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table td {
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-btn {
+      margin-right: 5px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .empty-message {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      color: #666;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/categories" class="active">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-action">
+        <h1>Quản Lý Danh Mục</h1>
+        <a href="/admin/category/add" class="btn btn-primary">+ Thêm Danh Mục</a>
+      </div>
+
+      <% if (categories.length === 0) { %>
+        <div class="empty-message">
+          <p>Chưa có danh mục nào. <a href="/admin/category/add">Thêm danh mục đầu tiên</a></p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Tên Danh Mục</th>
+              <th>Mô Tả</th>
+              <th>Số Sản Phẩm</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% categories.forEach(category => { %>
+              <tr>
+                <td><strong><%= category.name %></strong></td>
+                <td><%= category.description || '-' %></td>
+                <td><span class="badge"><%= productCounts[category._id] || 0 %> sản phẩm</span></td>
+                <td>
+                  <div class="actions">
+                    <a href="/admin/category/<%= category._id %>/edit" class="btn btn-secondary action-btn">Sửa</a>
+                    <% if ((productCounts[category._id] || 0) === 0) { %>
+                      <form method="POST" action="/admin/category/<%= category._id %>/delete" style="display: inline;">
+                        <button type="submit" class="btn btn-danger action-btn" onclick="return confirm('Bạn chắc chắn muốn xóa danh mục này?')">Xóa</button>
+                      </form>
+                    <% } else { %>
+                      <button class="btn btn-danger action-btn" disabled title="Không thể xóa vì còn sản phẩm">Xóa</button>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: #1a1a1a;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    table th {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    table td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-btn {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .empty-message {
+      background-color: white;
+      padding: 40px;
+      text-align: center;
+      border-radius: 5px;
+      color: #999;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>Admin</h2>
+      <ul>
+        <li><a href="/admin/dashboard">Bảng điều khiển</a></li>
+        <li><a href="/admin">Sản phẩm</a></li>
+        <li><a href="/admin/categories" class="active">Danh mục</a></li>
+        <li><a href="/admin/orders">Đơn hàng</a></li>
+        <li><a href="/admin/users">Người dùng</a></li>
+        <li><a href="/logout">Đăng xuất</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="header">
+        <h1>Quản Lý Danh Mục</h1>
+        <a href="/admin/category/add" class="btn btn-primary">Thêm Danh Mục</a>
+      </div>
+
+      <% if (categories.length === 0) { %>
+        <div class="empty-message">
+          <p>Chưa có danh mục nào. <a href="/admin/category/add">Thêm danh mục đầu tiên</a></p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Tên Danh Mục</th>
+              <th>Mô Tả</th>
+              <th>Số Sản Phẩm</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% categories.forEach(category => { %>
+              <tr>
+                <td><strong><%= category.name %></strong></td>
+                <td><%= category.description || '-' %></td>
+                <td><span class="badge"><%= productCounts[category._id] || 0 %> sản phẩm</span></td>
+                <td>
+                  <a href="/admin/category/<%= category._id %>/edit" class="btn btn-warning action-btn">Sửa</a>
+                  <% if ((productCounts[category._id] || 0) === 0) { %>
+                    <form method="POST" action="/admin/category/<%= category._id %>/delete" style="display: inline;">
+                      <button type="submit" class="btn btn-danger action-btn" onclick="return confirm('Bạn chắc chắn muốn xóa danh mục này?')">Xóa</button>
+                    </form>
+                  <% } else { %>
+                    <button class="btn btn-danger action-btn" disabled title="Không thể xóa vì còn sản phẩm">Xóa</button>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #1a1a1a;
+      color: white;
+      padding: 2rem 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar-header {
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .sidebar-menu {
+      list-style: none;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover {
+      background-color: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .sidebar-menu a.active {
+      background-color: rgba(255,255,255,0.2);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      color: #666;
+      font-size: 1rem;
+    }
+    .recent-orders {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .recent-orders h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+    .btn-primary {
+      background-color: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #5568d3;
+    }
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status-confirmed {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    .status-shipped {
+      background-color: #cfe2ff;
+      color: #084298;
+    }
+    .status-delivered {
+      background-color: #d1e7dd;
+      color: #0a3622;
+    }
+    .logout-btn {
+      background-color: #dc3545;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard" class="active">Dashboard</a></li>
+        <li><a href="/admin">Sản Phẩm</a></li>
+        <li><a href="/admin/categories">Danh Mục</a></li>
+        <li><a href="/admin/orders">Đơn Hàng</a></li>
+        <li><a href="/admin/users">Người Dùng</a></li>
+        <li><a href="/admin/discounts">Mã Giảm Giá</a></li>
+        <li><a href="/">Trang Chủ</a></li>
+        <li><a href="/auth/logout">Đăng Xuất</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header">
+        <h1>Dashboard Admin</h1>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value"><%= totalProducts %></div>
+          <div class="stat-label">Tổng Sản Phẩm</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= totalUsers %></div>
+          <div class="stat-label">Tổng Người Dùng</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= totalOrders %></div>
+          <div class="stat-label">Tổng Đơn Hàng</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= (totalRevenue / 1000000).toFixed(1) %>M</div>
+          <div class="stat-label">Doanh Thu</div>
+        </div>
+      </div>
+
+      <div class="recent-orders">
+        <h2>📋 5 Đơn Hàng Gần Đây</h2>
+        <% if (recentOrders.length === 0) { %>
+          <p style="text-align: center; color: #999; padding: 2rem;">Chưa có đơn hàng nào</p>
+        <% } else { %>
+          <table>
+            <thead>
+              <tr>
+                <th>Mã Đơn</th>
+                <th>Khách Hàng</th>
+                <th>Ngày Đặt</th>
+                <th>Tổng Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% recentOrders.forEach(order => { %>
+                <tr>
+                  <td>#<%= order._id.toString().slice(-8) %></td>
+                  <td><%= order.user.name %></td>
+                  <td><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></td>
+                  <td><%= order.totalPrice.toLocaleString('vi-VN') %>đ</td>
+                  <td>
+                    <span class="status-badge status-<%= order.status %>">
+                      <%= order.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/admin/order/<%= order._id %>" class="btn btn-primary">Chi Tiết</a>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
